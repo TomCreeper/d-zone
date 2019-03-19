@@ -22,12 +22,12 @@ function initGame(images) {
     game.renderer.addCanvas(canvas);
     game.bindCanvas(canvas);
     game.ui = new UI(game);
-    //game.showGrid = true;
-    //game.timeRenders = true;
+    game.showGrid = true;
+    game.timeRenders = true;
 
-    //game.on('update', function () {
-    //    // Update
-    //});
+    game.on('update', function () {
+        // Update
+    });
     initWebsocket();
 
     window.pause = function() { game.paused = true; };
@@ -46,8 +46,8 @@ function initWebsocket() {
 
     // Swap the comments on the next 3 lines to switch between your websocket server and a virtual one
     ws = new WebSocket(socketURL);
-    //var TestSocket = require('./script/engine/tester.js'),
-    //ws = new TestSocket(50, 3000);
+    var TestSocket = require('./script/engine/tester.js'),
+    ws = new TestSocket(50, 3000);
     ws.addEventListener('message', function(event) {
         var data = JSON.parse(event.data);
         if(decorator) decorator.beacon.ping();
@@ -156,13 +156,13 @@ function initWebsocket() {
             if(window.location.protocol !== 'file:') window.history.replaceState(
                 data.data.request, requestServer, window.location.pathname + params
             );
-            //return;
-            //console.log('Initializing actors',data.data);
+            return;
+            console.log('Initializing actors',data.data);
             game.setMaxListeners(Object.keys(userList).length + 50);
             users.setMaxListeners(Object.keys(userList).length);
             for(var uid in userList) { if(!userList.hasOwnProperty(uid)) continue;
-                //if(uid != '86913608335773696') continue;
-                //if(data.data[uid].status != 'online') continue;
+                if(uid != '86913608335773696') continue;
+                if(data.data[uid].status != 'online') continue;
                 if(!userList[uid].username) continue;
                 users.addActor(userList[uid]);
                 //break;
@@ -178,21 +178,21 @@ function initWebsocket() {
             window.alert(data.data.message);
             if(!game.world) joinServer({id: 'default'});
         } else {
-            //console.log('Websocket data:',data);
+            console.log('Websocket data:',data);
         }
     });
     ws.addEventListener('open', function() { console.log('Websocket connected'); });
     ws.addEventListener('close', function() {console.log('Websocket disconnected'); });
     ws.addEventListener('error', function(err) {console.log('Websocket error:', err); });
 
-    // window.testMessage = function(message) {
-    //     var msg = message ? message.text : 'hello, test message yo!';
-    //     var uid = message ? message.uid : users.actors[Object.keys(users.actors)[0]].uid;
-    //     var channel = message ? message.channel : '1';
-    //     ws.send('data', JSON.stringify({ type: 'message', data: {
-    //         uid: uid, message: msg, channel: channel
-    //     }}));
-    // };
+     window.testMessage = function(message) {
+         var msg = message ? message.text : 'hello, test message yo!';
+         var uid = message ? message.uid : users.actors[Object.keys(users.actors)[0]].uid;
+         var channel = message ? message.channel : '1';
+         ws.send('data', JSON.stringify({ type: 'message', data: {
+             uid: uid, message: msg, channel: channel
+         }}));
+     };
 }
 
 window.onpopstate = function(event) {
@@ -215,9 +215,9 @@ function getStartupServer() {
         startupServer = bs.getItem('dzone-default-server'); // Check localstorage
         if(startupServer) startupServer = JSON.parse(startupServer);
     }
-    if(!startupServer/* || !game.servers[startupServer.id]*/) startupServer = { id: 'default' };
+    if(!startupServer || !game.servers[startupServer.id]) startupServer = { id: 'default' };
     if(util.getURLParameter('p')) startupServer.password = util.getURLParameter('p');
     return startupServer;
 }
 
-//setTimeout(function() { game.paused = true; },1000);
+setTimeout(function() { game.paused = true; },1000);
