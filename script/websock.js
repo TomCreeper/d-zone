@@ -31,8 +31,8 @@ function WebSock(config, onConnect, onJoinServer) {
             }
         });
         socket.on('close', function(code, desc) {
-            //console.log(DateFormat(new Date(),
-            //    "h:MM:ss TT"),'client disconnected, total:', wss.clients.length);
+            console.log(DateFormat(new Date(),
+                "h:MM:ss TT"),'client disconnected, total:', wss.clients.length);
         });
     });
     wss.on('listening', () => console.log('Websocket listening on port', config.get('port')));
